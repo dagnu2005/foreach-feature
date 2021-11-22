@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="dda524ac-126f-4782-a7d0-a91e40c89d9c" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="5a309d8f-8ac0-4e1d-a556-b3063e27d1f7" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="2029" />
+	</db:config>
+	<flow name="foreach_projectFlow" doc:id="2ed6afc2-a53e-4795-9d39-40435113a7ff" >
+		<http:listener doc:name="Listener" doc:id="c072e4e0-6d89-46c7-9785-3537c7e8ff19" path="/foreach" config-ref="HTTP_Listener_config"/>
+		<db:select doc:name="Select" doc:id="0e6fb0e4-3979-46ae-8500-b4b7dc4a4bb3" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM world.countrylanguage limit 6]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="794b9283-d1ef-441e-bbd9-523732603151" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="01f3796f-4e26-495d-afe8-2bc781cb7300">
+			<logger level="INFO" doc:name="Logger" doc:id="295d05ce-4376-4253-94b0-9dd33ed72923" message="#[payload]"/>
+		</foreach>
+	</flow>
+</mule>
