@@ -29,4 +29,18 @@ payload]]></ee:set-payload>
 			<logger level="INFO" doc:name="Logger" doc:id="295d05ce-4376-4253-94b0-9dd33ed72923" message="#[payload]"/>
 		</foreach>
 	</flow>
+	<flow name="foreach_projectFlow1" doc:id="2f0768d6-d9d9-4e45-9ea2-59b3777c2085" >
+		<http:listener doc:name="Listener" doc:id="665264ef-f07f-483a-b656-ab18561406f7" config-ref="HTTP_Listener_config"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="e2280eca-73cd-4d5e-9702-71a06073df52" />
+		<ee:transform doc:name="Transform Message" doc:id="b5e41fcd-3a9c-4f51-a840-703a86cc9f65" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:bulk-insert doc:name="Bulk insert" doc:id="8e4f4c39-59da-4c36-b3de-cf6187d49967" />
+	</flow>
 </mule>
